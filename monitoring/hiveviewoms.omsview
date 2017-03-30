@@ -1,0 +1,449 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "resourcegroup": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "subscriptionId": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "workspace": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "workspaceapiversion": {
+            "type": "string",
+            "defaultValue": ""
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "[parameters('workspaceapiversion')]",
+            "name": "[parameters('workspace')]",
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "location": "[parameters('location')]",
+            "id": "[Concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/', parameters('resourcegroup'), '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspace'))]",
+            "resources": [
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "name": "HDInsight Hadoop",
+                    "type": "views",
+                    "location": "[parameters('location')]",
+                    "id": "[Concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/', parameters('resourcegroup'), '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspace'),'/views/HDInsight Hadoop')]",
+                    "dependson": [
+                        "[Concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/', parameters('resourcegroup'), '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspace'))]"
+                    ],
+                    "properties": {
+                        "Id": "HDInsight Hadoop",
+                        "Name": "HDInsight Hadoop",
+                        "Author": "ashishth@microsoft.com",
+                        "Source": "Local",
+                        "Dashboard": [
+                            {
+                                "Id": "SingleQueryDonutBuilderBladeV1",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": "",
+                                        "newGroup": false,
+                                        "icon": "",
+                                        "useIcon": false
+                                    },
+                                    "Header": {
+                                        "Title": "Unhealthy Nodes",
+                                        "Subtitle": ""
+                                    },
+                                    "Donut": {
+                                        "Query": "(TimeGenerated>NOW-5minute)(Type=metrics_resourcemanager_clustermetrics_CL)( ClusterType_s=hadoop) |measure max(NumUnhealthyNMs_d) by ClusterName_s",
+                                        "CenterLegend": {
+                                            "Text": "",
+                                            "Operation": "Sum",
+                                            "ArcsToSelect": []
+                                        },
+                                        "Options": {
+                                            "colors": [
+                                                "#00188f",
+                                                "#0072c6",
+                                                "#00bcf2"
+                                            ],
+                                            "valueColorMapping": []
+                                        }
+                                    },
+                                    "List": {
+                                        "Query": "Type=metrics_resourcemanager_clustermetrics_CL ( ClusterType_s=hadoop) |measure   max(NumActiveNMs_d)   by ClusterName_s",
+                                        "HideGraph": false,
+                                        "enableSparklines": true,
+                                        "operation": "Last Sample",
+                                        "ColumnsTitle": {
+                                            "Name": "Cluster",
+                                            "Value": "Active Nodes"
+                                        },
+                                        "Color": "#0072c6",
+                                        "thresholds": {
+                                            "isEnabled": false,
+                                            "values": [
+                                                {
+                                                    "name": "Normal",
+                                                    "threshold": "Default",
+                                                    "color": "#009e49",
+                                                    "isDefault": true
+                                                },
+                                                {
+                                                    "name": "Warning",
+                                                    "threshold": "60",
+                                                    "color": "#fcd116",
+                                                    "isDefault": false
+                                                },
+                                                {
+                                                    "name": "Error",
+                                                    "threshold": "90",
+                                                    "color": "#ba141a",
+                                                    "isDefault": false
+                                                }
+                                            ]
+                                        },
+                                        "NameDSVSeparator": "",
+                                        "NavigationQuery": "{selected item}"
+                                    }
+                                }
+                            },
+                            {
+                                "Id": "LineChartCalloutStackedBuilderBlade",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": "",
+                                        "newGroup": false
+                                    },
+                                    "charts": [
+                                        {
+                                            "Header": {
+                                                "Title": "Apps Pending",
+                                                "Subtitle": ""
+                                            },
+                                            "LineChart": {
+                                                "Query": "(ClusterType_s=hadoop)(Type=metrics_resourcemanager_queue_root_CL) |measure max(AppsPending_d) as AppsPending by ClusterName_s ",
+                                                "yAxis": {
+                                                    "isLogarithmic": false,
+                                                    "units": {
+                                                        "baseUnitType": "",
+                                                        "baseUnit": "",
+                                                        "displayUnit": ""
+                                                    },
+                                                    "customLabel": ""
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "Header": {
+                                                "Title": "Apps Failed",
+                                                "Subtitle": ""
+                                            },
+                                            "LineChart": {
+                                                "Query": "(ClusterType_s=hadoop)(Type=metrics_resourcemanager_queue_root_CL) |measure max(AppsFailed_d) as AppsFailed by ClusterName_s ",
+                                                "yAxis": {
+                                                    "isLogarithmic": false,
+                                                    "units": {
+                                                        "baseUnitType": "",
+                                                        "baseUnit": "",
+                                                        "displayUnit": ""
+                                                    },
+                                                    "customLabel": ""
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "Header": {
+                                                "Title": "Apps Killed",
+                                                "Subtitle": ""
+                                            },
+                                            "LineChart": {
+                                                "Query": "(ClusterType_s=hadoop)(Type=metrics_resourcemanager_queue_root_CL) |measure max(AppsKilled_d) as AppsKilled by ClusterName_s ",
+                                                "yAxis": {
+                                                    "isLogarithmic": false,
+                                                    "units": {
+                                                        "baseUnitType": "",
+                                                        "baseUnit": "",
+                                                        "displayUnit": ""
+                                                    },
+                                                    "customLabel": ""
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "Id": "LineChartCalloutStackedBuilderBlade",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": "",
+                                        "newGroup": false
+                                    },
+                                    "charts": [
+                                        {
+                                            "Header": {
+                                                "Title": "Apps Submitted ",
+                                                "Subtitle": ""
+                                            },
+                                            "LineChart": {
+                                                "Query": "(ClusterType_s=hadoop)(Type=metrics_resourcemanager_queue_root_CL) |measure max(AppsSubmitted_d) as AppsSubmitted by ClusterName_s ",
+                                                "yAxis": {
+                                                    "isLogarithmic": false,
+                                                    "units": {
+                                                        "baseUnitType": "",
+                                                        "baseUnit": "",
+                                                        "displayUnit": ""
+                                                    },
+                                                    "customLabel": ""
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "Header": {
+                                                "Title": "Apps Running ",
+                                                "Subtitle": ""
+                                            },
+                                            "LineChart": {
+                                                "Query": "(ClusterType_s=hadoop) (Type=metrics_resourcemanager_queue_root_CL) |measure max(AppsRunning_d) as AppsRunning by ClusterName_s ",
+                                                "yAxis": {
+                                                    "isLogarithmic": false,
+                                                    "units": {
+                                                        "baseUnitType": "",
+                                                        "baseUnit": "",
+                                                        "displayUnit": ""
+                                                    },
+                                                    "customLabel": ""
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "Header": {
+                                                "Title": "Apps Completed ",
+                                                "Subtitle": ""
+                                            },
+                                            "LineChart": {
+                                                "Query": "(ClusterType_s=hadoop)(Type=metrics_resourcemanager_queue_root_CL) |measure max(AppsCompleted_d) as AppsCompleted by ClusterName_s ",
+                                                "yAxis": {
+                                                    "isLogarithmic": false,
+                                                    "units": {
+                                                        "baseUnitType": "",
+                                                        "baseUnit": "",
+                                                        "displayUnit": ""
+                                                    },
+                                                    "customLabel": ""
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "Id": "NotableQueriesBuilderBlade",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": "Logs",
+                                        "newGroup": false,
+                                        "preselectedFilters": "",
+                                        "renderMode": "grid"
+                                    },
+                                    "queries": [
+                                        {
+                                            "query": " (ClusterType_s=spark)(Type=log_timelineserver_CL)|select Message",
+                                            "displayName": "Yarn Timeline server logs"
+                                        },
+                                        {
+                                            "query": " (ClusterType_s=spark)(Type=log_nodemanager_CL) |select Message",
+                                            "displayName": "Yarn Node Manager logs"
+                                        },
+                                        {
+                                            "query": "(ClusterType_s=spark) (Type=log_mrjobsummary_CL)",
+                                            "displayName": "Job summary logs"
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "Id": "LineChartCalloutStackedBuilderBlade",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": "Yarn",
+                                        "newGroup": false
+                                    },
+                                    "charts": [
+                                        {
+                                            "Header": {
+                                                "Title": "GC Time",
+                                                "Subtitle": ""
+                                            },
+                                            "LineChart": {
+                                                "Query": "(ClusterType_s=hadoop)(Type=metrics_resourcemanager_jvm_CL) |measure avg(GcTimeMillis_d) by ClusterName_s interval 10minute",
+                                                "yAxis": {
+                                                    "isLogarithmic": false,
+                                                    "units": {
+                                                        "baseUnitType": "TimeRange",
+                                                        "baseUnit": "Milliseconds",
+                                                        "displayUnit": "Hours"
+                                                    },
+                                                    "customLabel": ""
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "Header": {
+                                                "Title": "Heap",
+                                                "Subtitle": ""
+                                            },
+                                            "LineChart": {
+                                                "Query": "( ClusterType_s=hadoop)Type=metrics_resourcemanager_jvm_CL  |measure avg(MemHeapUsedM_d) by ClusterName_s interval 10minute",
+                                                "yAxis": {
+                                                    "isLogarithmic": false,
+                                                    "units": {
+                                                        "baseUnitType": "Bits",
+                                                        "baseUnit": "Kilobytes",
+                                                        "displayUnit": "AUTO"
+                                                    },
+                                                    "customLabel": ""
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "Header": {
+                                                "Title": "Non Heap",
+                                                "Subtitle": ""
+                                            },
+                                            "LineChart": {
+                                                "Query": "(ClusterType_s=hadoop)(Type=metrics_resourcemanager_jvm_CL) |measure avg(MemNonHeapUsedM_d) by ClusterName_s interval 10minute",
+                                                "yAxis": {
+                                                    "isLogarithmic": false,
+                                                    "units": {
+                                                        "baseUnitType": "Bits",
+                                                        "baseUnit": "Kilobytes",
+                                                        "displayUnit": "AUTO"
+                                                    },
+                                                    "customLabel": ""
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "Id": "LineChartCalloutStackedBuilderBlade",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": "",
+                                        "newGroup": false
+                                    },
+                                    "charts": [
+                                        {
+                                            "Header": {
+                                                "Title": "CPU Time",
+                                                "Subtitle": ""
+                                            },
+                                            "LineChart": {
+                                                "Query": "Type:Perf CounterName=\"% Processor Time\" InstanceName=\"_Total\" Computer='hn*-*' or Computer='zk*-*' or Computer='wn*-*' | measure avg(CounterValue) by Computer ",
+                                                "yAxis": {
+                                                    "isLogarithmic": false,
+                                                    "units": {
+                                                        "baseUnitType": "",
+                                                        "baseUnit": "",
+                                                        "displayUnit": ""
+                                                    },
+                                                    "customLabel": ""
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "Header": {
+                                                "Title": "Available MBytes Memory",
+                                                "Subtitle": ""
+                                            },
+                                            "LineChart": {
+                                                "Query": "Type=Perf ObjectName=Memory CounterName=\"Available MBytes Memory\"   Computer='hn*-*' or Computer='zk*-*' or Computer='wn*-*' | measure avg(CounterValue) by Computer ",
+                                                "yAxis": {
+                                                    "isLogarithmic": false,
+                                                    "units": {
+                                                        "baseUnitType": "",
+                                                        "baseUnit": "",
+                                                        "displayUnit": ""
+                                                    },
+                                                    "customLabel": ""
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "Header": {
+                                                "Title": "Logical Disk Writes",
+                                                "Subtitle": ""
+                                            },
+                                            "LineChart": {
+                                                "Query": "Type=Perf (ObjectName=\"Logical Disk\") (CounterName=\"Disk Writes/sec\") (InstanceName=_Total)    Computer='hn*-*' or Computer='zk*-*' or Computer='wn*-*' | measure avg(CounterValue) by Computer ",
+                                                "yAxis": {
+                                                    "isLogarithmic": false,
+                                                    "units": {
+                                                        "baseUnitType": "",
+                                                        "baseUnit": "",
+                                                        "displayUnit": ""
+                                                    },
+                                                    "customLabel": ""
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ],
+                        "OverviewTile": {
+                            "Id": "SingleQueryDonutBuilderTileV1",
+                            "Type": "OverviewTile",
+                            "Version": 0,
+                            "Configuration": {
+                                "Donut": {
+                                    "Query": "(TimeGenerated>NOW-5minute) (Type=metrics_resourcemanager_queue_root_CL ) (ClusterType_s=hadoop) |measure max(AppsRunning_d) as AppsRunning by ClusterName_s ",
+                                    "CenterLegend": {
+                                        "Text": "Yarn Apps Running",
+                                        "Operation": "Sum",
+                                        "ArcsToSelect": []
+                                    },
+                                    "Options": {
+                                        "colors": [
+                                            "#fcd116",
+                                            "#0072c6",
+                                            "#00bcf2"
+                                        ],
+                                        "valueColorMapping": []
+                                    }
+                                },
+                                "Advanced": {
+                                    "DataFlowVerification": {
+                                        "Enabled": false,
+                                        "Query": "*",
+                                        "Message": ""
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

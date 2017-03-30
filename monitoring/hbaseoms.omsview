@@ -1,0 +1,679 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "resourcegroup": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "subscriptionId": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "workspace": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "workspaceapiversion": {
+            "type": "string",
+            "defaultValue": ""
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "[parameters('workspaceapiversion')]",
+            "name": "[parameters('workspace')]",
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "location": "[parameters('location')]",
+            "id": "[Concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/', parameters('resourcegroup'), '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspace'))]",
+            "resources": [
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "name": "HDInsightLogAnalyticsMonitoring",
+                    "type": "views",
+                    "location": "[parameters('location')]",
+                    "id": "[Concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/', parameters('resourcegroup'), '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspace'),'/views/HDInsightLogAnalyticsMonitoring')]",
+                    "dependson": [
+                        "[Concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/', parameters('resourcegroup'), '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspace'))]"
+                    ],
+                    "properties": {
+                        "Id": "HDInsightLogAnalyticsMonitoring",
+                        "Name": "HDInsightLogAnalyticsMonitoring",
+                        "Author": "ashishth@microsoft.com",
+                        "Source": "Local",
+                        "Dashboard": [
+                            {
+                                "Id": "LineChartSparklineBuilderBlade",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": "",
+                                        "newGroup": false,
+                                        "icon": "",
+                                        "useIcon": false
+                                    },
+                                    "Header": {
+                                        "Title": "HBase Region Count",
+                                        "Subtitle": ""
+                                    },
+                                    "lineChart": {
+                                        "query": "Type= metrics_regionserver_CL | measure avg(regionCount_d) by ClusterName_s, HostName_s ",
+                                        "yAxis": {
+                                            "isLogarithmic": false,
+                                            "units": {
+                                                "baseUnitType": "",
+                                                "baseUnit": "",
+                                                "displayUnit": ""
+                                            },
+                                            "customLabel": ""
+                                        }
+                                    },
+                                    "List": {
+                                        "Query": "Type= metrics_regionserver_CL | measure avg(regionCount_d) by ClusterName_s, HostName_s ",
+                                        "operation": "Last Sample",
+                                        "HideGraph": false,
+                                        "enableSparklines": true,
+                                        "ColumnsTitle": {
+                                            "Name": "Cluster",
+                                            "Value": "Regions"
+                                        },
+                                        "Color": "#0072c6",
+                                        "thresholds": {
+                                            "isEnabled": true,
+                                            "values": [
+                                                {
+                                                    "name": "Normal",
+                                                    "threshold": "Default",
+                                                    "color": "#009e49",
+                                                    "isDefault": true
+                                                },
+                                                {
+                                                    "name": "Warning",
+                                                    "threshold": "800",
+                                                    "color": "#fcd116",
+                                                    "isDefault": false
+                                                },
+                                                {
+                                                    "name": "Error",
+                                                    "threshold": "1000",
+                                                    "color": "#ba141a",
+                                                    "isDefault": false
+                                                }
+                                            ]
+                                        },
+                                        "NavigationQuery": "{selected item}"
+                                    }
+                                }
+                            },
+                            {
+                                "Id": "LineChartSparklineBuilderBlade",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": "",
+                                        "newGroup": false,
+                                        "icon": "",
+                                        "useIcon": false
+                                    },
+                                    "Header": {
+                                        "Title": "HBase hLog file (WAL) count",
+                                        "Subtitle": "Write Ahead Log"
+                                    },
+                                    "lineChart": {
+                                        "query": "Type= metrics_regionserver_CL | measure avg(hlogFileCount_d) by ClusterName_s ",
+                                        "yAxis": {
+                                            "isLogarithmic": false,
+                                            "units": {
+                                                "baseUnitType": "",
+                                                "baseUnit": "",
+                                                "displayUnit": ""
+                                            },
+                                            "customLabel": ""
+                                        }
+                                    },
+                                    "List": {
+                                        "Query": "Type= metrics_regionserver_CL | measure avg(hlogFileCount_d) by ClusterName_s, HostName_s ",
+                                        "operation": "Last Sample",
+                                        "HideGraph": false,
+                                        "enableSparklines": true,
+                                        "ColumnsTitle": {
+                                            "Name": "Cluster ",
+                                            "Value": "WAL Count"
+                                        },
+                                        "Color": "#0072c6",
+                                        "thresholds": {
+                                            "isEnabled": true,
+                                            "values": [
+                                                {
+                                                    "name": "Normal",
+                                                    "threshold": "Default",
+                                                    "color": "#009e49",
+                                                    "isDefault": true
+                                                },
+                                                {
+                                                    "name": "Warning",
+                                                    "threshold": "50",
+                                                    "color": "#fcd116",
+                                                    "isDefault": false
+                                                },
+                                                {
+                                                    "name": "Error",
+                                                    "threshold": "80",
+                                                    "color": "#ba141a",
+                                                    "isDefault": false
+                                                }
+                                            ]
+                                        },
+                                        "NavigationQuery": "{selected item}"
+                                    }
+                                }
+                            },
+                            {
+                                "Id": "NotableQueriesBuilderBlade",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": "",
+                                        "newGroup": false,
+                                        "preselectedFilters": "",
+                                        "renderMode": "grid"
+                                    },
+                                    "queries": [
+                                        {
+                                            "query": "Type=log_regionserver_CL |select  Message",
+                                            "displayName": "HBase Region Server Logs"
+                                        },
+                                        {
+                                            "query": "Type=log_restserver_CL |select  Message",
+                                            "displayName": "HBase REST Server Logs"
+                                        },
+                                        {
+                                            "query": "Type=log_phoenixserver_CL  |select  Message",
+                                            "displayName": "PhoenixLogs"
+                                        },
+                                        {
+                                            "query": "Type=log_hmaster_CL |select  Message",
+                                            "displayName": "HMaster Logs"
+                                        },
+                                        {
+                                            "query": "\"Exception\" |Measure Count() by ClusterName_s interval 10minute",
+                                            "displayName": "Exceptions over Time"
+                                        },
+                                        {
+                                            "query": "\"Error\" |Measure Count() by ClusterName_s interval 10minute",
+                                            "displayName": "Errors over time"
+                                        },
+                                        {
+                                            "query": "\"WARN\" |Measure Count() by ClusterName_s interval 10minute",
+                                            "displayName": "WARN messages over time"
+                                        },
+                                        {
+                                            "query": "\"Failed\" |Measure Count() by ClusterName_s interval 10minute",
+                                            "displayName": "Failed messages over time"
+                                        },
+                                        {
+                                            "query": "(Type=log_resourcemanager_CL)| select Message",
+                                            "displayName": "Yarn Resource Manager Logs"
+                                        },
+                                        {
+                                            "query": "* (Type=log_timelineserver_CL)|select Message",
+                                            "displayName": "Yarn Timeline server Logs"
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "Id": "NotableQueriesBuilderBlade",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": "Popular HBase Charts",
+                                        "newGroup": false,
+                                        "preselectedFilters": "Type, Computer",
+                                        "renderMode": "default"
+                                    },
+                                    "queries": [
+                                        {
+                                            "query": "Type= metrics_regionserver_CL | measure  avg(writeRequestCount_d), min(writeRequestCount_d), max(writeRequestCount_d) ,pct95(writeRequestCount_d) by ClusterName_s, HostName_s",
+                                            "displayName": "Avg, Min , Max Writes"
+                                        },
+                                        {
+                                            "query": " Type=  metrics_regionserver_os_CL  | measure avg(CommittedVirtualMemorySize_d) by ObjectName_s interval 1minute",
+                                            "displayName": "Committed Virtual Memory Size"
+                                        },
+                                        {
+                                            "query": "Type=  metrics_regionserver_os_CL | measure avg(TotalPhysicalMemorySize_d), avg(FreePhysicalMemorySize_d) by ObjectName_s interval 1minute",
+                                            "displayName": "Free vs Total Memory"
+                                        },
+                                        {
+                                            "query": "Type=  metrics_regionserver_os_CL | measure avg(OpenFileDescriptorCount_d), avg(MaxFileDescriptorCount_d) by ObjectName_s interval 1minute",
+                                            "displayName": "Open Files vs Total Open Files"
+                                        },
+                                        {
+                                            "query": "Type= metrics_hmaster_jvm_CL  | measure avg(ThreadsWaiting_d) by HostName_s ",
+                                            "displayName": "HMaster JVM Thread Waiting"
+                                        },
+                                        {
+                                            "query": "Type= metrics_hmaster_CL |measure avg(numDeadRegionServers_d) by HostName_s ",
+                                            "displayName": "Dead Region Server"
+                                        },
+                                        {
+                                            "query": " Type=metrics_regionserver_os_CL  | measure avg(SystemLoadAverage_d) by ObjectName_s interval 1minute",
+                                            "displayName": "Average Load"
+                                        },
+                                        {
+                                            "query": "Type=metrics_regionserver_os_CL | measure avg(SystemCpuLoad_d) by ObjectName_s interval 1minute",
+                                            "displayName": "CPU Load"
+                                        },
+                                        {
+                                            "query": "Type= metrics_hmaster_ipc_CL| measure avg(sentBytes_d) by HostName_s ",
+                                            "displayName": "HMaster IPC sentBytes"
+                                        },
+                                        {
+                                            "query": "Type= metrics_hmaster_ipc_CL| measure avg( receivedBytes_d) by HostName_s ",
+                                            "displayName": "HMaster IPC receivedBytes"
+                                        },
+                                        {
+                                            "query": "(Type=metrics_regionserver_ipc_CL)|measure avg(exceptions_d) by ClusterName_s interval 10minute",
+                                            "displayName": "Exceptions Over Time"
+                                        },
+                                        {
+                                            "query": "(Type=metrics_regionserver_wal_CL) |measure avg(AppendSize_95th_percentile_d) by HostName_s interval 1hour",
+                                            "displayName": "WAL Append Size"
+                                        },
+                                        {
+                                            "query": "(Type=metrics_regionserver_wal_CL) |measure avg(SyncTime_95th_percentile_d) by HostName_s interval 1hour",
+                                            "displayName": "WAL Sync time"
+                                        },
+                                        {
+                                            "query": "(Type=metrics_regionserver_jvm_CL)|measure avg(GcTimeMillis_d) by ClusterName_s, HostName_s interval 10minute",
+                                            "displayName": "Region Server GC Time"
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "Id": "LineChartCalloutStackedBuilderBlade",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": " ",
+                                        "newGroup": false
+                                    },
+                                    "charts": [
+                                        {
+                                            "Header": {
+                                                "Title": "Slow puts",
+                                                "Subtitle": ""
+                                            },
+                                            "LineChart": {
+                                                "Query": "* (Type=metrics_regionserver_CL) |measure avg(slowPutCount_d) by ClusterName_s interval 10minute",
+                                                "yAxis": {
+                                                    "isLogarithmic": false,
+                                                    "units": {
+                                                        "baseUnitType": "",
+                                                        "baseUnit": "",
+                                                        "displayUnit": ""
+                                                    },
+                                                    "customLabel": ""
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "Header": {
+                                                "Title": "Active Handlers",
+                                                "Subtitle": ""
+                                            },
+                                            "LineChart": {
+                                                "Query": "* (Type=metrics_regionserver_ipc_CL) |measure max(numActiveHandler_d) by ClusterName_s interval 10minute",
+                                                "yAxis": {
+                                                    "isLogarithmic": false,
+                                                    "units": {
+                                                        "baseUnitType": "",
+                                                        "baseUnit": "",
+                                                        "displayUnit": ""
+                                                    },
+                                                    "customLabel": ""
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "Header": {
+                                                "Title": "Max queue size",
+                                                "Subtitle": ""
+                                            },
+                                            "LineChart": {
+                                                "Query": "* (Type=metrics_regionserver_ipc_CL)|measure max(numCallsInGeneralQueue_d) by ClusterName_s interval 10minute",
+                                                "yAxis": {
+                                                    "isLogarithmic": false,
+                                                    "units": {
+                                                        "baseUnitType": "",
+                                                        "baseUnit": "",
+                                                        "displayUnit": ""
+                                                    },
+                                                    "customLabel": ""
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "Id": "LineChartCalloutStackedBuilderBlade",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": "",
+                                        "newGroup": false
+                                    },
+                                    "charts": [
+                                        {
+                                            "Header": {
+                                                "Title": "HBase Reads",
+                                                "Subtitle": ""
+                                            },
+                                            "LineChart": {
+                                                "Query": "Type= metrics_regionserver_CL | measure avg(readRequestCount_d) by ClusterName_s, HostName_s",
+                                                "yAxis": {
+                                                    "isLogarithmic": false,
+                                                    "units": {
+                                                        "baseUnitType": "",
+                                                        "baseUnit": "",
+                                                        "displayUnit": ""
+                                                    },
+                                                    "customLabel": ""
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "Header": {
+                                                "Title": "HBase Writes",
+                                                "Subtitle": ""
+                                            },
+                                            "LineChart": {
+                                                "Query": "Type= metrics_regionserver_CL | measure avg(writeRequestCount_d) by ClusterName_s, HostName_s",
+                                                "yAxis": {
+                                                    "isLogarithmic": false,
+                                                    "units": {
+                                                        "baseUnitType": "",
+                                                        "baseUnit": "",
+                                                        "displayUnit": ""
+                                                    },
+                                                    "customLabel": ""
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "Header": {
+                                                "Title": "WAL Sync Time",
+                                                "Subtitle": ""
+                                            },
+                                            "LineChart": {
+                                                "Query": "(Type=metrics_regionserver_wal_CL) |measure avg(SyncTime_95th_percentile_d) by ClusterName_s, HostName_s ",
+                                                "yAxis": {
+                                                    "isLogarithmic": false,
+                                                    "units": {
+                                                        "baseUnitType": "",
+                                                        "baseUnit": "",
+                                                        "displayUnit": ""
+                                                    },
+                                                    "customLabel": ""
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "Id": "LineChartCalloutStackedBuilderBlade",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": "",
+                                        "newGroup": false
+                                    },
+                                    "charts": [
+                                        {
+                                            "Header": {
+                                                "Title": "Block Cache Hit",
+                                                "Subtitle": ""
+                                            },
+                                            "LineChart": {
+                                                "Query": "Type= metrics_regionserver_CL | measure avg(blockCacheHitCount_d) by ClusterName_s, HostName_s ",
+                                                "yAxis": {
+                                                    "isLogarithmic": false,
+                                                    "units": {
+                                                        "baseUnitType": "",
+                                                        "baseUnit": "",
+                                                        "displayUnit": ""
+                                                    },
+                                                    "customLabel": ""
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "Header": {
+                                                "Title": "Total Requests",
+                                                "Subtitle": ""
+                                            },
+                                            "LineChart": {
+                                                "Query": "Type= metrics_regionserver_CL | measure avg(totalRequestCount_d) by ClusterName_s ,HostName_s ",
+                                                "yAxis": {
+                                                    "isLogarithmic": false,
+                                                    "units": {
+                                                        "baseUnitType": "",
+                                                        "baseUnit": "",
+                                                        "displayUnit": ""
+                                                    },
+                                                    "customLabel": ""
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "Header": {
+                                                "Title": "RPC Multi Request",
+                                                "Subtitle": ""
+                                            },
+                                            "LineChart": {
+                                                "Query": "Type= metrics_regionserver_CL | measure avg(rpcMultiRequestCount_d) by ClusterName_s, HostName_s",
+                                                "yAxis": {
+                                                    "isLogarithmic": false,
+                                                    "units": {
+                                                        "baseUnitType": "",
+                                                        "baseUnit": "",
+                                                        "displayUnit": ""
+                                                    },
+                                                    "customLabel": ""
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "Id": "LineChartCalloutStackedBuilderBlade",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": "",
+                                        "newGroup": false
+                                    },
+                                    "charts": [
+                                        {
+                                            "Header": {
+                                                "Title": "Dead and Live Region Servers",
+                                                "Subtitle": ""
+                                            },
+                                            "LineChart": {
+                                                "Query": "(Type=metrics_hmaster_CL) masterActiveTime_d > 0 | measure max(numRegionServers_d) as live , max(numDeadRegionServers_d) as dead by ClusterName_s,HostName_s ",
+                                                "yAxis": {
+                                                    "isLogarithmic": false,
+                                                    "units": {
+                                                        "baseUnitType": "",
+                                                        "baseUnit": "",
+                                                        "displayUnit": ""
+                                                    },
+                                                    "customLabel": ""
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "Header": {
+                                                "Title": "Slow Sync with underlying storage",
+                                                "Subtitle": ""
+                                            },
+                                            "LineChart": {
+                                                "Query": "\"slow sync\" | measure Count() by ClusterName_s, HostName_s",
+                                                "yAxis": {
+                                                    "isLogarithmic": false,
+                                                    "units": {
+                                                        "baseUnitType": "",
+                                                        "baseUnit": "",
+                                                        "displayUnit": ""
+                                                    },
+                                                    "customLabel": ""
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "Header": {
+                                                "Title": "GC Time (ms)",
+                                                "Subtitle": ""
+                                            },
+                                            "LineChart": {
+                                                "Query": "(Type=metrics_regionserver_jvm_CL) | measure avg(GcTimeMillis_d) by ClusterName_s, HostName_s ",
+                                                "yAxis": {
+                                                    "isLogarithmic": false,
+                                                    "units": {
+                                                        "baseUnitType": "",
+                                                        "baseUnit": "",
+                                                        "displayUnit": ""
+                                                    },
+                                                    "customLabel": ""
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "Id": "LineChartCalloutStackedBuilderBlade",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": "",
+                                        "newGroup": false
+                                    },
+                                    "charts": [
+                                        {
+                                            "Header": {
+                                                "Title": "CPU Time",
+                                                "Subtitle": ""
+                                            },
+                                            "LineChart": {
+                                                "Query": "Type:Perf CounterName=\"% Processor Time\" InstanceName=\"_Total\" Computer='hn*-*' or Computer='zk*-*' or Computer='wn*-*' | measure avg(CounterValue) by Computer ",
+                                                "yAxis": {
+                                                    "isLogarithmic": false,
+                                                    "units": {
+                                                        "baseUnitType": "",
+                                                        "baseUnit": "",
+                                                        "displayUnit": ""
+                                                    },
+                                                    "customLabel": ""
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "Header": {
+                                                "Title": "Available MBytes Memory",
+                                                "Subtitle": ""
+                                            },
+                                            "LineChart": {
+                                                "Query": "Type=Perf ObjectName=Memory CounterName=\"Available MBytes Memory\"   Computer='hn*-*' or Computer='zk*-*' or Computer='wn*-*' | measure avg(CounterValue) by Computer ",
+                                                "yAxis": {
+                                                    "isLogarithmic": false,
+                                                    "units": {
+                                                        "baseUnitType": "",
+                                                        "baseUnit": "",
+                                                        "displayUnit": ""
+                                                    },
+                                                    "customLabel": ""
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "Header": {
+                                                "Title": "Logical Disk Writes",
+                                                "Subtitle": ""
+                                            },
+                                            "LineChart": {
+                                                "Query": "Type=Perf (ObjectName=\"Logical Disk\") (CounterName=\"Disk Writes/sec\") (InstanceName=_Total)    Computer='hn*-*' or Computer='zk*-*' or Computer='wn*-*' | measure avg(CounterValue) by Computer ",
+                                                "yAxis": {
+                                                    "isLogarithmic": false,
+                                                    "units": {
+                                                        "baseUnitType": "",
+                                                        "baseUnit": "",
+                                                        "displayUnit": ""
+                                                    },
+                                                    "customLabel": ""
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ],
+                        "OverviewTile": {
+                            "Id": "SingleQueryDonutBuilderTileV1",
+                            "Type": "OverviewTile",
+                            "Version": 0,
+                            "Configuration": {
+                                "Donut": {
+                                    "Query": "* (Type=metrics_hmaster_CL) masterStartTime_d>0 |measure max(numRegionServers_d) by ClusterName_s",
+                                    "CenterLegend": {
+                                        "Text": "Live Region Servers",
+                                        "Operation": "Sum",
+                                        "ArcsToSelect": []
+                                    },
+                                    "Options": {
+                                        "colors": [
+                                            "#00188f",
+                                            "#0072c6",
+                                            "#00bcf2"
+                                        ],
+                                        "valueColorMapping": [
+                                            {
+                                                "value": "",
+                                                "color": "#00188f"
+                                            }
+                                        ]
+                                    }
+                                },
+                                "Advanced": {
+                                    "DataFlowVerification": {
+                                        "Enabled": false,
+                                        "Query": "*",
+                                        "Message": ""
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}
