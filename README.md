@@ -1,5 +1,9 @@
 <H1> Install OMS Monitoring in HDInsight clutser </H1> 
-  Use Script Action to install OMS integration for following components
+ Use folling Script actions in HDInsight cluster to install OMS integration for following components. Script actions needs two parameters from your OMS Log Analytics Workspace
+ ```shell
+<workspaceid>,<worspacekey>
+```
+ 
   
 ## HBase
 Select Head Node, Worker Node & Zookeeper Nodes
