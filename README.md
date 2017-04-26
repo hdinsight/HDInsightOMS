@@ -32,20 +32,25 @@ Once installed, you can check HDInsight Logs and Metrics data in Azure Log Analy
 You can also import pre-built Import Views in Log Abnalytics (OMS)
 View
 
-Spark View
+## Spark View
 ```shell
 https://raw.githubusercontent.com/hdinsight/HDInsightOMS/master/monitoring/sparkOMS.omsview
 ```
-Hive View
+## Hive View
 ```shell
 https://raw.githubusercontent.com/hdinsight/HDInsightOMS/master/monitoring/hiveviewoms.omsview
 ```
 
-Try few queries
+## Try few queries
 
-Query to try
+Queries to try
 ```shell
-(Type=metrics_resourcemanager_clustermetrics_CL)
 (Type=metrics_resourcemanager_clustermetrics_CL)| measure max(NumActiveNMs_d) by ClusterName_s interval 10minute
+```
+```shell
+(Type=metrics_resourcemanager_queue_root_default_CL) |measure max(AppsPending_d) as AppsPending by ClusterName_s interval 1HOUR
+```
+```shell
+* (Type=log_sparkappsexecutors_CL) |select Message
 ```
 
