@@ -2,7 +2,7 @@
  Use folling Script actions in HDInsight cluster to install OMS integration for following components. Script actions needs two parameters from your OMS Log Analytics Workspace
  
  <code>
-"<workspaceid>,<worspacekey>"
+workspaceid, worspacekey
 </code>
  
   
