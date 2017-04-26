@@ -7,11 +7,19 @@ Select Head Node, Worker Node & Zookeeper Nodes
   https://raw.githubusercontent.com/hdinsight/HDInsightOMS/master/monitoring/script2.sh
   ```
 ## Spark
+Select Head Node, Worker Nodes
+
 ```shell
 https://raw.githubusercontent.com/hdinsight/HDInsightOMS/master/monitoring/scriptspark.sh
 ```
-##Interactive Hive
+## Interactive Hive
+Select Head Node, Worker Nodes
 ```shell
 https://raw.githubusercontent.com/hdinsight/HDInsightOMS/master/monitoring/installintractivehive.sh
+```
+##  Hive
+Select Head Node, Worker Nodes
+```shell
+https://raw.githubusercontent.com/hdinsight/HDInsightOMS/master/monitoring/hivescript.sh
 ```
 
