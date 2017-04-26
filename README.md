@@ -27,4 +27,25 @@ Select Head Node, Worker Nodes
 ```shell
 https://raw.githubusercontent.com/hdinsight/HDInsightOMS/master/monitoring/hivescript.sh
 ```
-Once installed, you can check HDInsight Logs and Metrics data in Azure Log Analytics
+Once installed, you can check HDInsight Logs and Metrics data in Azure Log Analytics. 
+
+You can also import pre-built Import Views in Log Abnalytics (OMS)
+View
+
+Spark View
+```shell
+https://raw.githubusercontent.com/hdinsight/HDInsightOMS/master/monitoring/sparkOMS.omsview
+```
+Hive View
+```shell
+https://raw.githubusercontent.com/hdinsight/HDInsightOMS/master/monitoring/hiveviewoms.omsview
+```
+
+Try few queries
+
+Query to try
+```shell
+(Type=metrics_resourcemanager_clustermetrics_CL)
+(Type=metrics_resourcemanager_clustermetrics_CL)| measure max(NumActiveNMs_d) by ClusterName_s interval 10minute
+```
+
