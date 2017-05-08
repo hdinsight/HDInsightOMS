@@ -29,7 +29,7 @@ https://raw.githubusercontent.com/hdinsight/HDInsightOMS/master/monitoring/hives
 ```
 Once installed, you can check HDInsight Logs and Metrics data in Azure Log Analytics. 
 
-You can also import pre-built Import Views in Log Abnalytics (OMS)
+You can also import pre-built Import Views in Log Analytics (OMS)
 View
 
 ## Spark View
