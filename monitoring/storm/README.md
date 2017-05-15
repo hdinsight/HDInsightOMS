@@ -2,8 +2,18 @@
 
 ## Setup
 
+1. Verify that JMX endpoints are exposed in the cluster's Ambari configuration, if not, see the [below](#Ambari-JMX-Configuration-settings) setup
 1. Run a [Script Action](https://docs.microsoft.com/en-us/azure/hdinsight/hdinsight-hadoop-script-actions-linux) using `hdStormOms.sh`
 1. Create a new OMS View in the View Designer and import the provided `storm.omsview` to create an example OMS view based on the installed Storm metrics
+
+### Ambari JMX Configuration settings
+
+These should be enabled by default in newer clusters. However, if not, verify the following settings are present under the Storm configuration:
+
+* nimbus.childopts: `-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.port=56431`
+* supervisor.childopts: `-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.port={{jmxremote_port}}`
+* worker.childopts: `-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.port=%ID%`
+
 
 ## Queries to try
 
