@@ -2,11 +2,7 @@
 
 ## Setup
 
-1. Clone this repo
-1. Change the username/password values under `oms_collectd_nimbus.conf`
-1. Change the `STORAGE_ROOT` value to point to wherever you'd like to host your settings (such as blob storage)
-1. Upload the changed settings to the storage root
-1. Run a [Script Action](https://docs.microsoft.com/en-us/azure/hdinsight/hdinsight-hadoop-script-actions-linux) pointing to the `hdiStormOms.sh` script in your storage account
+1. Run a [Script Action](https://docs.microsoft.com/en-us/azure/hdinsight/hdinsight-hadoop-script-actions-linux) using hdStormOms.sh
 
 ## Queries to try
 
