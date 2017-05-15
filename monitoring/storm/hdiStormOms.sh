@@ -11,7 +11,7 @@ echo 'Updating package definitions'
 sudo apt-get update
 
 echo 'Installing CollectD service'
-sudo apt-get -y install collectd collectd-util
+sudo apt-get -y install collectd collectd-utils
 
 echo 'Downloading OMS Agent to /tmp'
 wget https://github.com/Microsoft/OMS-Agent-for-Linux/releases/download/OMSAgent_GA_v1.2.0-25/omsagent-1.2.0-25.universal.x64.sh -O /tmp/omsagent.x64.sh
@@ -46,7 +46,8 @@ then
     echo 'Copying Storm FluentD plugins'
     sudo rm -f /tmp/filter_storm*.rb
     wget "$REPO_ROOT/filters/filter_storm_flatten.rb" -O /tmp/filter_storm_flatten.rb
-    sudo cp -f /tmp/filter_storm_flatten.rb /opt/microsoft.omsagent/plugin/filter_storm_flatten.rb
+    sudo cp -f /tmp/filter_storm_flatten.rb /opt/microsoft/omsagent/plugin/filter_storm_flatten.rb
+
     wget "$REPO_ROOT/filters/filter_storm_oms.rb" -O /tmp/filter_storm_oms.rb
     sudo cp -f /tmp/filter_storm_oms.rb /opt/microsoft/omsagent/plugin/filter_storm_oms.rb
 
