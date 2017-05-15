@@ -2,7 +2,8 @@
 
 ## Setup
 
-1. Run a [Script Action](https://docs.microsoft.com/en-us/azure/hdinsight/hdinsight-hadoop-script-actions-linux) using hdStormOms.sh
+1. Run a [Script Action](https://docs.microsoft.com/en-us/azure/hdinsight/hdinsight-hadoop-script-actions-linux) using `hdStormOms.sh`
+1. Create a new OMS View in the View Designer and import the provided `storm.omsview` to create an example OMS view based on the installed Storm metrics
 
 ## Queries to try
 
