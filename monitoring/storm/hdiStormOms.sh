@@ -96,7 +96,7 @@ then
 
     echo 'Copying OMS Agent CollectD filter configurations'
     sudo rm -f /tmp/oms_collectd_worker.conf
-    wget "$REPO_ROOT/oms_collectd_worker.conf" -O /tmp/oms_collectd_worker.conf
+    wget "$REPO_ROOT/worker/oms_collectd_worker.conf" -O /tmp/oms_collectd_worker.conf
     sudo cp -f /tmp/oms_collectd_worker.conf /etc/opt/microsoft/omsagent/conf/omsagent.d/collectd.conf
 
 fi
