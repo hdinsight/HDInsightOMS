@@ -1,9 +1,13 @@
 # Apache Storm -> Microsoft OMS
 
+## Prerequisites
+
+1. OMS Workspace, with Workspace ID and Primary Key. See [here](https://docs.microsoft.com/en-us/azure/operations-management-suite/operations-management-suite-overview) for more information.
+
 ## Setup
 
 1. Verify that JMX endpoints are exposed in the cluster's Ambari configuration, if not, see the [below](#Ambari-JMX-Configuration-settings) setup
-1. Run a [Script Action](https://docs.microsoft.com/en-us/azure/hdinsight/hdinsight-hadoop-script-actions-linux) using `hdStormOms.sh`
+1. Run a [Script Action](https://docs.microsoft.com/en-us/azure/hdinsight/hdinsight-hadoop-script-actions-linux) using `hdStormOms.sh` with OMS Workspace ID and Primary Key arguments
 1. Create a new OMS View in the View Designer and import the provided `storm.omsview` to create an example OMS view based on the installed Storm metrics
 
 ### Ambari JMX Configuration settings
