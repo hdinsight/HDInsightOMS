@@ -78,10 +78,12 @@ then
 
     echo 'Worker node setup started'
 
-    # TODO: This needs to use the workergen.py script to dynamically generate jmx config based on Ambari configuration, rather than assume the default config
-    echo 'Copying CollectD JMX metrics configuration'
-    sudo rm -f /tmp/collectd_oms_worker_jmx.conf
-    wget "$REPO_ROOT/worker/collectd_oms_worker_jmx.conf" -O /tmp/collectd_oms_worker_jmx.conf
+    echo 'Generating JMX config for worker'
+    sudo rm -f /tmp/worker_jmx.conf
+    sudo rm -f /tmp/workergen.py
+    wget "$REPO_ROOT/templates/worker_jmx.conf" -O /tmp/worker_jmx.conf
+    wget "$REPO_ROOT/workergen.py" -O /tmp/workergen.py
+    python /tmp/workergen.py --template /tmp/worker_jmx.conf --output /tmp/collectd_oms_worker_jmx.conf
     sudo cp -f /tmp/collectd_oms_worker_jmx.conf /etc/collectd/collectd.conf.d/collectd_oms_worker_jmx.conf
 
     echo 'Copying CollectD OMS HTTP plugin configuration'
