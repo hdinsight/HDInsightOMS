@@ -47,8 +47,8 @@ def get_worker_jmx_template(path_string):
 
 def generate_worker_config():
     parser = OptionParser()
-    parser.add_option("-u", "--url", dest="host", default='http://localhost:8744',
-                      help="Ambari server host. e.g. http://localhost:8744")
+    parser.add_option("-u", "--url", dest="host", default='http://headnodehost:8744',
+                      help="Ambari server host. e.g. http://headnodehost:8744")
 
     parser.add_option("-t", "--template", dest="template", default="templates/worker_jmx.conf",
                       help="Template file location")
