@@ -1,8 +1,7 @@
 
 """ Generates the CollectD JMX configuration for Storm worker nodes
-    based off of values pulled from a local Ambari instance"""
+    based off of values pulled from the cluster's Ambari instance"""
 import urllib2
-import os
 import json
 from string import Template
 from optparse import OptionParser
@@ -47,6 +46,8 @@ def get_worker_jmx_template(path_string):
 
 def generate_worker_config():
     parser = OptionParser()
+    # Cluster's that haven't experience any manual failover should have an etc/hosts
+    # reference to the headnode
     parser.add_option("-u", "--url", dest="host", default='http://headnodehost:8744',
                       help="Ambari server host. e.g. http://headnodehost:8744")
 
