@@ -40,7 +40,7 @@ def create_connection_block(slot):
                                           instance='worker-{}'.format(slot))
 
 
-def get_worker_jmx_template():
+def get_worker_jmx_template(path_string):
     template_text = open(os.path.join("templates", "worker_jmx.conf"))
     return Template(template_text.read())
 
@@ -49,6 +49,12 @@ def generate_worker_config():
     parser = OptionParser()
     parser.add_option("-u", "--url", dest="host", default='http://localhost:8744',
                       help="Ambari server host. e.g. http://localhost:8744")
+
+    parser.add_option("-t", "--template", dest="template", default="templates/worker_jmx.conf",
+                      help="Template file location")
+
+    parser.add_option("-o", "--output", dest="output",
+                      default="worker/collectd_oms_worker_jmx.conf", help="Output File")
 
     (options, _) = parser.parse_args()
     config_host = options.host
@@ -61,9 +67,9 @@ def generate_worker_config():
 
     print 'Created worker blocks for slots {}'.format(slots)
 
-    jmx_template = get_worker_jmx_template()
-    open(os.path.join('worker', 'collectd_oms_worker_jmx.conf'),
-         'w').write(jmx_template.substitute(worker_connections=worker_connections))
+    jmx_template = get_worker_jmx_template(options.template)
+    open(options.output, 'w').write(jmx_template.substitute(
+        worker_connections=worker_connections))
 
 
 generate_worker_config()
