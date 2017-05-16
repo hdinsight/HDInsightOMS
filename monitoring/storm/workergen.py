@@ -41,7 +41,7 @@ def create_connection_block(slot):
 
 
 def get_worker_jmx_template(path_string):
-    template_text = open(os.path.join("templates", "worker_jmx.conf"))
+    template_text = open(path_string)
     return Template(template_text.read())
 
 
