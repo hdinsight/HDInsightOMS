@@ -44,6 +44,10 @@ then
     echo 'Head node setup started'
 
     echo 'Copying Storm FluentD plugins'
+    sudo rm -f /tmp/in_storm.rb
+    wget "https://raw.githubusercontent.com/rywater/fluent-plugin-storm/master/lib/fluent/plugin/in_storm.rb" -O /tmp/in_storm.rb
+    sudo cp -f /tmp/in_storm.rb /opt/microsoft/omsagent/plugin/in_storm.rb
+
     sudo rm -f /tmp/filter_storm*.rb
     wget "$REPO_ROOT/filters/filter_storm_flatten.rb" -O /tmp/filter_storm_flatten.rb
     sudo cp -f /tmp/filter_storm_flatten.rb /opt/microsoft/omsagent/plugin/filter_storm_flatten.rb
