@@ -43,11 +43,24 @@ if [[ $HOSTNAME == hn* ]];
 then
     echo 'Head node setup started'
 
-    echo 'Copying Storm FluentD plugins'
-    sudo rm -f /tmp/in_storm.rb
-    wget "https://raw.githubusercontent.com/rywater/fluent-plugin-storm/master/lib/fluent/plugin/in_storm.rb" -O /tmp/in_storm.rb
-    sudo cp -f /tmp/in_storm.rb /opt/microsoft/omsagent/plugin/in_storm.rb
+    echo 'Copying OMS and CollectD configuration for Nimbus'
+    sudo rm -f /tmp/oms_collectd_nimbus.conf
+    # _primary config includes the REST API metrics
+    postfix=$([[ $HOSTNAME == hn0* ]] && echo "_primary.conf" || echo ".conf")
+    config="$REPO_ROOT/nimbus/oms_collectd_nimbus$postfix"
+    wget "$config" -O /tmp/oms_collectd_nimbus.conf
+    sudo cp -f /tmp/oms_collectd_nimbus.conf /etc/opt/microsoft/omsagent/conf/omsagent.d/collectd.conf
 
+    if [[ $HOSTNAME == hn0* ]];
+    then 
+        # Storm UI, which this pulls from, runs on hn0 by default 
+        echo 'Copying Storm REST API FluentD plugin'
+        sudo rm -f /tmp/in_storm.rb
+        wget "https://raw.githubusercontent.com/rywater/fluent-plugin-storm/master/lib/fluent/plugin/in_storm.rb" -O /tmp/in_storm.rb
+        sudo cp -f /tmp/in_storm.rb /opt/microsoft/omsagent/plugin/in_storm.rb
+    fi
+
+    echo 'Copying Storm FluentD plugins'
     sudo rm -f /tmp/filter_storm*.rb
     wget "$REPO_ROOT/filters/filter_storm_flatten.rb" -O /tmp/filter_storm_flatten.rb
     sudo cp -f /tmp/filter_storm_flatten.rb /opt/microsoft/omsagent/plugin/filter_storm_flatten.rb
@@ -69,11 +82,6 @@ then
     sudo rm -f /tmp/collectd_nimbus.conf
     wget "$REPO_ROOT/nimbus/collectd_nimbus.conf" -O /tmp/collectd_nimbus.conf
     sudo cp -f /tmp/collectd_nimbus.conf /etc/collectd/collectd.conf
-
-    echo 'Copying OMS and CollectD configuration for Nimbus'
-    sudo rm -f /tmp/oms_collectd_nimbus.conf
-    wget "$REPO_ROOT/nimbus/oms_collectd_nimbus.conf" -O /tmp/oms_collectd_nimbus.conf
-    sudo cp -f /tmp/oms_collectd_nimbus.conf /etc/opt/microsoft/omsagent/conf/omsagent.d/collectd.conf
 
 fi
 
