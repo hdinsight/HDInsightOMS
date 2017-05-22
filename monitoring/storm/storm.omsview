@@ -1,0 +1,594 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "resourcegroup": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "subscriptionId": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "workspace": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "workspaceapiversion": {
+      "type": "string",
+      "defaultValue": ""
+    }
+  },
+  "resources": [{
+    "apiVersion": "[parameters('workspaceapiversion')]",
+    "name": "[parameters('workspace')]",
+    "type": "Microsoft.OperationalInsights/workspaces",
+    "location": "[parameters('location')]",
+    "id": "[Concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/', parameters('resourcegroup'), '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspace'))]",
+    "resources": [{
+      "apiVersion": "2015-11-01-preview",
+      "name": "Storm Cluster Capacity",
+      "type": "views",
+      "location": "[parameters('location')]",
+      "id": "[Concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/', parameters('resourcegroup'), '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspace'),'/views/Storm Cluster Capacity')]",
+      "dependson": [
+        "[Concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/', parameters('resourcegroup'), '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspace'))]"
+      ],
+      "properties": {
+        "Id": "Storm Cluster Capacity",
+        "Name": "Storm Cluster Capacity",
+        "Author": "rywater@microsoft.com",
+        "Source": "Local",
+        "Version": 1,
+        "Dashboard": [{
+            "Id": "NumberTileListBuilderBlade",
+            "Type": "Blade",
+            "Version": 0,
+            "Configuration": {
+              "General": {
+                "title": "Topology",
+                "newGroup": true,
+                "icon": "",
+                "useIcon": false
+              },
+              "Tile": {
+                "Query": "* Type=stormrestmetrics_CL status_s=\"ACTIVE\"  TimeGenerated >NOW-1HOUR | dedup topologyId_s",
+                "Legend": "Topologies currently running"
+              },
+              "List": {
+                "Query": "* Type=stormrestmetrics_CL status_s=\"ACTIVE\"  TimeGenerated >NOW-1HOUR | dedup topologyId_s | select topologyId_s",
+                "HideGraph": false,
+                "enableSparklines": false,
+                "operation": "Summary",
+                "ColumnsTitle": {
+                  "Name": "Topologies",
+                  "Value": ""
+                },
+                "Color": "#0072c6",
+                "thresholds": {
+                  "isEnabled": false,
+                  "values": [{
+                      "name": "Normal",
+                      "threshold": "Default",
+                      "color": "#009e49",
+                      "isDefault": true
+                    },
+                    {
+                      "name": "Warning",
+                      "threshold": "60",
+                      "color": "#fcd116",
+                      "isDefault": false
+                    },
+                    {
+                      "name": "Error",
+                      "threshold": "90",
+                      "color": "#ba141a",
+                      "isDefault": false
+                    }
+                  ]
+                },
+                "NameDSVSeparator": "",
+                "NavigationQuery": "{selected item}"
+              }
+            }
+          },
+          {
+            "Id": "LineChartBuilderBlade",
+            "Type": "Blade",
+            "Version": 0,
+            "Configuration": {
+              "General": {
+                "title": "Capacity",
+                "newGroup": false,
+                "icon": "",
+                "useIcon": false
+              },
+              "Header": {
+                "Title": "By Topology",
+                "Subtitle": "Sampled each minute"
+              },
+              "LineChart": {
+                "Query": "* Type=stormrestmetrics_CL | measure avg(capacity_d) as Capacity by topologyId_s interval 1MINUTE",
+                "yAxis": {
+                  "isLogarithmic": false,
+                  "units": {
+                    "baseUnitType": "",
+                    "baseUnit": "",
+                    "displayUnit": ""
+                  },
+                  "customLabel": ""
+                }
+              },
+              "List": {
+                "Query": "* Type=stormrestmetrics_CL | measure avg(capacity_d) as Capacity by topologyId_s",
+                "HideGraph": false,
+                "enableSparklines": false,
+                "operation": "Summary",
+                "ColumnsTitle": {
+                  "Name": "Topology",
+                  "Value": "Current Capacity"
+                },
+                "Color": "#0072c6",
+                "thresholds": {
+                  "isEnabled": true,
+                  "values": [{
+                      "name": "Normal",
+                      "threshold": "Default",
+                      "color": "#009e49",
+                      "isDefault": true
+                    },
+                    {
+                      "name": "Warning",
+                      "threshold": ".7",
+                      "color": "#fcd116",
+                      "isDefault": false
+                    },
+                    {
+                      "name": "Error",
+                      "threshold": ".9",
+                      "color": "#ba141a",
+                      "isDefault": false
+                    }
+                  ]
+                },
+                "NameDSVSeparator": "",
+                "NavigationQuery": "{selected item}"
+              }
+            }
+          },
+          {
+            "Id": "LineChartCalloutStackedBuilderBlade",
+            "Type": "Blade",
+            "Version": 0,
+            "Configuration": {
+              "General": {
+                "title": "Topology Latency",
+                "newGroup": true
+              },
+              "charts": [{
+                  "Header": {
+                    "Title": "Average Process Latency",
+                    "Subtitle": "Sampled Each Minute"
+                  },
+                  "LineChart": {
+                    "Query": "* Type=stormrestmetrics_CL InstanceName_s=bolt | measure avg(processLatency_d) as Latency by topologyId_s interval 1MINUTE",
+                    "yAxis": {
+                      "isLogarithmic": false,
+                      "units": {
+                        "baseUnitType": "TimeRange",
+                        "baseUnit": "Milliseconds",
+                        "displayUnit": "AUTO"
+                      },
+                      "customLabel": ""
+                    }
+                  }
+                },
+                {
+                  "Header": {
+                    "Title": "Average Execute Latency",
+                    "Subtitle": "Sampled Each Minute"
+                  },
+                  "LineChart": {
+                    "Query": "* Type=stormrestmetrics_CL InstanceName_s=bolt | measure avg(executeLatency_d) as Latency by topologyId_s interval 1MINUTE",
+                    "yAxis": {
+                      "isLogarithmic": false,
+                      "units": {
+                        "baseUnitType": "TimeRange",
+                        "baseUnit": "Milliseconds",
+                        "displayUnit": "AUTO"
+                      },
+                      "customLabel": ""
+                    }
+                  }
+                },
+                {
+                  "Header": {
+                    "Title": "Average Complete Latency",
+                    "Subtitle": "Sampled Each Minute"
+                  },
+                  "LineChart": {
+                    "Query": "* Type=stormrestmetrics_CL InstanceName_s=spout | measure avg(completeLatency_d) as Latency by topologyId_s interval 1MINUTE",
+                    "yAxis": {
+                      "isLogarithmic": false,
+                      "units": {
+                        "baseUnitType": "",
+                        "baseUnit": "",
+                        "displayUnit": ""
+                      },
+                      "customLabel": ""
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "Id": "LineChartCalloutStackedBuilderBlade",
+            "Type": "Blade",
+            "Version": 0,
+            "Configuration": {
+              "General": {
+                "title": "Bolt Latency",
+                "newGroup": false
+              },
+              "charts": [{
+                  "Header": {
+                    "Title": "Average Process Latency",
+                    "Subtitle": "Sampled Each Minute"
+                  },
+                  "LineChart": {
+                    "Query": "* Type=stormrestmetrics_CL InstanceName_s=bolt | measure avg(processLatency_d) as Latency by topologyId_s, id_s interval 1MINUTE",
+                    "yAxis": {
+                      "isLogarithmic": false,
+                      "units": {
+                        "baseUnitType": "",
+                        "baseUnit": "",
+                        "displayUnit": ""
+                      },
+                      "customLabel": ""
+                    }
+                  }
+                },
+                {
+                  "Header": {
+                    "Title": "Average Execute Latency",
+                    "Subtitle": "Sampled Each Minute"
+                  },
+                  "LineChart": {
+                    "Query": "* Type=stormrestmetrics_CL InstanceName_s=bolt | measure avg(executeLatency_d) as Latency by topologyId_s, id_s interval 1MINUTE",
+                    "yAxis": {
+                      "isLogarithmic": false,
+                      "units": {
+                        "baseUnitType": "",
+                        "baseUnit": "",
+                        "displayUnit": ""
+                      },
+                      "customLabel": ""
+                    }
+                  }
+                },
+                {
+                  "Header": {
+                    "Title": "Average Complete Latency",
+                    "Subtitle": "Sampled Each Minute"
+                  },
+                  "LineChart": {
+                    "Query": "* Type=stormrestmetrics_CL InstanceName_s=spout | measure avg(completeLatency_d) as Latency by topologyId_s, id_s interval 1MINUTE",
+                    "yAxis": {
+                      "isLogarithmic": false,
+                      "units": {
+                        "baseUnitType": "",
+                        "baseUnit": "",
+                        "displayUnit": ""
+                      },
+                      "customLabel": ""
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "Id": "LineChartCalloutStackedBuilderBlade",
+            "Type": "Blade",
+            "Version": 0,
+            "Configuration": {
+              "General": {
+                "title": "Message Processing by Topology",
+                "newGroup": true
+              },
+              "charts": [{
+                  "Header": {
+                    "Title": "Emitted / Acked",
+                    "Subtitle": ""
+                  },
+                  "LineChart": {
+                    "Query": "* Type=stormrestmetrics_CL window_s=600 | measure avg(emitted_d) as Emitted, avg(acked_d) as Acked by topologyId_s interval 1MINUTE",
+                    "yAxis": {
+                      "isLogarithmic": false,
+                      "units": {
+                        "baseUnitType": "",
+                        "baseUnit": "",
+                        "displayUnit": ""
+                      },
+                      "customLabel": ""
+                    }
+                  }
+                },
+                {
+                  "Header": {
+                    "Title": "Transferred / Acked",
+                    "Subtitle": ""
+                  },
+                  "LineChart": {
+                    "Query": "* Type=stormrestmetrics_CL window_s=600 InstanceName_s=topology_stats | measure avg(transferred_d) as Transferred, avg(acked_d) as Acked by topologyId_s interval 1MINUTE",
+                    "yAxis": {
+                      "isLogarithmic": false,
+                      "units": {
+                        "baseUnitType": "",
+                        "baseUnit": "",
+                        "displayUnit": ""
+                      },
+                      "customLabel": ""
+                    }
+                  }
+                },
+                {
+                  "Header": {
+                    "Title": "Failed / Acked",
+                    "Subtitle": ""
+                  },
+                  "LineChart": {
+                    "Query": "* Type=stormrestmetrics_CL window_s=600 | measure avg(failed_d) as Failed, avg(acked_d) as Acked by topologyId_s interval 1MINUTE",
+                    "yAxis": {
+                      "isLogarithmic": false,
+                      "units": {
+                        "baseUnitType": "",
+                        "baseUnit": "",
+                        "displayUnit": ""
+                      },
+                      "customLabel": ""
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "Id": "LineChartCalloutStackedBuilderBlade",
+            "Type": "Blade",
+            "Version": 0,
+            "Configuration": {
+              "General": {
+                "title": "Message Processing by Bolt",
+                "newGroup": false
+              },
+              "charts": [{
+                  "Header": {
+                    "Title": "Emitted  / Acked",
+                    "Subtitle": ""
+                  },
+                  "LineChart": {
+                    "Query": "* Type=stormrestmetrics_CL window_s=600 | measure avg(emitted_d) as Emitted, avg(acked_d) as Acked by topologyId_s, id_s interval 1MINUTE",
+                    "yAxis": {
+                      "isLogarithmic": false,
+                      "units": {
+                        "baseUnitType": "",
+                        "baseUnit": "",
+                        "displayUnit": ""
+                      },
+                      "customLabel": ""
+                    }
+                  }
+                },
+                {
+                  "Header": {
+                    "Title": "Transferred / Acked",
+                    "Subtitle": "Sampled Each Minute"
+                  },
+                  "LineChart": {
+                    "Query": "* Type=stormrestmetrics_CL window_s=600 InstanceName_s=topology_stats | measure avg(transferred_d) as Transferred, avg(acked_d) as Acked by topologyId_s, id_s interval 1MINUTE",
+                    "yAxis": {
+                      "isLogarithmic": false,
+                      "units": {
+                        "baseUnitType": "",
+                        "baseUnit": "",
+                        "displayUnit": ""
+                      },
+                      "customLabel": ""
+                    }
+                  }
+                },
+                {
+                  "Header": {
+                    "Title": "Failed / Acked",
+                    "Subtitle": ""
+                  },
+                  "LineChart": {
+                    "Query": "* Type=stormrestmetrics_CL window_s=600 | measure avg(failed_d) as Failed, avg(acked_d) as Acked by topologyId_s, id_s interval 1MINUTE",
+                    "yAxis": {
+                      "isLogarithmic": false,
+                      "units": {
+                        "baseUnitType": "",
+                        "baseUnit": "",
+                        "displayUnit": ""
+                      },
+                      "customLabel": ""
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "Id": "LineChartCalloutStackedBuilderBlade",
+            "Type": "Blade",
+            "Version": 0,
+            "Configuration": {
+              "General": {
+                "title": "Box Performance",
+                "newGroup": true
+              },
+              "charts": [{
+                  "Header": {
+                    "Title": "Nimbus JVM Used Heap",
+                    "Subtitle": "Sampled Every 5 Minutes"
+                  },
+                  "LineChart": {
+                    "Query": "* (Type=stormnimbusmetrics_CL) (InstanceName_s=\"nimbus-jvm-memory-heap\") | measure avg(nimbus_jvm_memory_heap_used_value_d) as Heap by HostName_s interval 5MINUTE",
+                    "yAxis": {
+                      "isLogarithmic": false,
+                      "units": {
+                        "baseUnitType": "",
+                        "baseUnit": "",
+                        "displayUnit": ""
+                      },
+                      "customLabel": ""
+                    }
+                  }
+                },
+                {
+                  "Header": {
+                    "Title": "Supervisor JVM Used Heap",
+                    "Subtitle": "Sampled Every 5 Minutes"
+                  },
+                  "LineChart": {
+                    "Query": "* Type=stormsupervisormetrics_CL InstanceName_s=\"supervisor-jvm-memory-heap\" | measure avg(used_value_d) by HostName_s interval 1MINUTE",
+                    "yAxis": {
+                      "isLogarithmic": false,
+                      "units": {
+                        "baseUnitType": "",
+                        "baseUnit": "",
+                        "displayUnit": ""
+                      },
+                      "customLabel": ""
+                    }
+                  }
+                },
+                {
+                  "Header": {
+                    "Title": "Worker Heap Usage",
+                    "Subtitle": "1 Minute Average"
+                  },
+                  "LineChart": {
+                    "Query": "* Type=stormsupervisormetrics_CL InstanceName_s=worker* | measure avg(used_value_d) as UsedHeap by HostName_s, InstanceName_s interval 1MINUTE",
+                    "yAxis": {
+                      "isLogarithmic": false,
+                      "units": {
+                        "baseUnitType": "",
+                        "baseUnit": "",
+                        "displayUnit": ""
+                      },
+                      "customLabel": ""
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "Id": "LineChartCalloutStackedBuilderBlade",
+            "Type": "Blade",
+            "Version": 0,
+            "Configuration": {
+              "General": {
+                "title": "",
+                "newGroup": false
+              },
+              "charts": [{
+                  "Header": {
+                    "Title": "Total CPU Utilization",
+                    "Subtitle": "Sampled Every 10 Minutes"
+                  },
+                  "LineChart": {
+                    "Query": "* Type=Perf InstanceName=_Total ObjectName=Processor | measure avg(CounterValue) by CounterName, Computer interval 10MINUTE",
+                    "yAxis": {
+                      "isLogarithmic": false,
+                      "units": {
+                        "baseUnitType": "Percentage",
+                        "baseUnit": "ZeroToOne",
+                        "displayUnit": "ZeroToOne"
+                      },
+                      "customLabel": ""
+                    }
+                  }
+                },
+                {
+                  "Header": {
+                    "Title": "CPU Utilization by Core",
+                    "Subtitle": "Sampled Every 10 Minutes"
+                  },
+                  "LineChart": {
+                    "Query": "* Type=Perf ObjectName=Processor InstanceName!=_Total CounterName=\"% Processor Time\" | measure avg(CounterValue) by CounterName, Computer, InstanceName interval 10MINUTE",
+                    "yAxis": {
+                      "isLogarithmic": false,
+                      "units": {
+                        "baseUnitType": "",
+                        "baseUnit": "",
+                        "displayUnit": ""
+                      },
+                      "customLabel": ""
+                    }
+                  }
+                },
+                {
+                  "Header": {
+                    "Title": "Privelaged CPU  Utilization",
+                    "Subtitle": "Sampled Every 10 Minutes"
+                  },
+                  "LineChart": {
+                    "Query": "* Type=Perf ObjectName=Processor CounterName=\"% Privileged Time\" InstanceName=_Total | measure avg(CounterValue) by Computer interval 10MINUTE",
+                    "yAxis": {
+                      "isLogarithmic": false,
+                      "units": {
+                        "baseUnitType": "",
+                        "baseUnit": "",
+                        "displayUnit": ""
+                      },
+                      "customLabel": ""
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "OverviewTile": {
+          "Id": "LineChartCalloutBuilderTile",
+          "Type": "OverviewTile",
+          "Version": 0,
+          "Configuration": {
+            "LineChart": {
+              "Query": "* Type=stormrestmetrics_CL | measure avg(capacity_d) as Capacity by topologyId_s interval 1MINUTE",
+              "Callout": {
+                "Title": "Current Max",
+                "Series": "",
+                "Operation": "Max"
+              },
+              "yAxis": {
+                "isLogarithmic": false,
+                "units": {
+                  "baseUnitType": "",
+                  "baseUnit": "",
+                  "displayUnit": ""
+                },
+                "customLabel": ""
+              }
+            },
+            "Advanced": {
+              "DataFlowVerification": {
+                "Enabled": false,
+                "Query": "*",
+                "Message": ""
+              }
+            }
+          }
+        }
+      }
+    }]
+  }]
+}
