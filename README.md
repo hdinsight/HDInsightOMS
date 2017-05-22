@@ -1,9 +1,10 @@
-<H1> Install OMS Monitoring in HDInsight cluster </H1> 
- Use following script actions in HDInsight cluster to install OMS integration for following components. Script action needs two parameters from your OMS Log Analytics Workspace
- 
- <code>
+# Install OMS Monitoring in HDInsight cluster
+Use following script actions in HDInsight cluster to install OMS integration for following components. Script action needs two parameters from your OMS Log Analytics Workspace:
+
+
+```
 workspaceid, worspacekey
-</code>
+```
  
   
 ## HBase
@@ -29,7 +30,7 @@ https://raw.githubusercontent.com/hdinsight/HDInsightOMS/master/monitoring/hives
 ```
 Once installed, you can check HDInsight Logs and Metrics data in Azure Log Analytics. 
 
-You can also import pre-built Import Views in Log Abnalytics (OMS)
+You can also import pre-built Import Views in Log Analytics (OMS)
 View
 
 ## Spark View
