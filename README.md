@@ -1,3 +1,6 @@
+This repo is retired. HDInsight now provides native integration with Azure Log Analytics https://docs.microsoft.com/en-us/azure/hdinsight/hdinsight-hadoop-oms-log-analytics-tutorial
+
+
 # Install OMS Monitoring in HDInsight cluster
 Use following script actions in HDInsight cluster to install OMS integration for following components. Script action needs two parameters from your OMS Log Analytics Workspace:
 
